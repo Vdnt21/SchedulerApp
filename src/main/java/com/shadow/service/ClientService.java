@@ -24,6 +24,10 @@ public class ClientService {
         return clientRepository.findById(id);
     }
 
+    public Optional<Client> findByClientName(String name) {
+        return Optional.ofNullable(clientRepository.findByClientName(name));
+    }
+
     public Iterable<Client> getAllClients() {
         return clientRepository.findAll();
     }

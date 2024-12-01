@@ -18,9 +18,14 @@ public class ClientController {
         return clientService.createClient(client);
     }
 
-    @Get("/{id}")
-    public Client findClientById(@PathVariable Long id) {
+    @Get("/id/{id}")
+    public Client findByClientId(@PathVariable Long id) {
         return clientService.getClientById(id).orElse(null);
+    }
+
+    @Get("/name/{name}")
+    public Optional<Client> findByClientName(@PathVariable String name) {
+        return clientService.findByClientName(name);
     }
 
     @Get

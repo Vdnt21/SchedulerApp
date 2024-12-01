@@ -6,4 +6,7 @@ import io.micronaut.data.repository.CrudRepository;
 
 @Repository
 public interface ClientRepository extends CrudRepository<Client, Long> {
+
+    public Client findByClientName(String name);
+
 }

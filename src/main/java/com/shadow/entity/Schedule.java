@@ -25,8 +25,8 @@ public class Schedule {
     @Column(name = "api_url", nullable = false, columnDefinition = "TEXT")
     private String apiUrl;
 
-    @Column(name = "frequency", nullable = false)
-    private String frequency;
+    @Column(name = "cron_expression", nullable = false)
+    private String cronExpression;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
