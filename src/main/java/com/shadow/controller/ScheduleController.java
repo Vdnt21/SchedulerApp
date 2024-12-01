@@ -4,10 +4,12 @@ import com.shadow.entity.Schedule;
 import com.shadow.misc.CronExpressions;
 import com.shadow.service.ScheduleService;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Controller("/schedules")
@@ -17,9 +19,11 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @Post
-    public Schedule createSchedule(@Body Schedule schedule, @QueryValue Optional<String> interval) {
-        interval.ifPresent(value -> {
-            switch (value.toLowerCase()) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Schedule createSchedule(@Body Schedule schedule) {
+        String interval = schedule.getCronExpression();
+            switch (interval.toLowerCase()) {
                 case "every_5_minutes":
                     schedule.setCronExpression(CronExpressions.EVERY_5_MINUTES);
                     break;
@@ -30,17 +34,16 @@ public class ScheduleController {
                     schedule.setCronExpression(CronExpressions.DAILY);
                     break;
                 default:
-                    throw new IllegalArgumentException("Invalid interval: " + value);
+                    throw new IllegalArgumentException("Invalid interval: " + interval);
             }
-        });
 
         return scheduleService.createSchedule(schedule);
     }
 
-    @Get("/client/{clientId}")
-    public List<Schedule> getSchedulesByClient(@PathVariable Long clientId) {
-        return scheduleService.getSchedulesByClientId(clientId);
-    }
+//    @Get("/client/{clientId}")
+//    public List<Schedule> getSchedulesByClient(@PathVariable Long clientId) {
+//        return scheduleService.getSchedulesByClientId(clientId);
+//    }
 
     @Get("/{id}")
     public Schedule getScheduleById(@PathVariable Long id) {

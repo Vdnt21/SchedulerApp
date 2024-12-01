@@ -6,25 +6,19 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import jakarta.inject.Singleton;
+import lombok.RequiredArgsConstructor;
 import org.quartz.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @Singleton
+@RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final Scheduler quartzScheduler;
     private final HttpClient httpClient;
-
-    public ScheduleService(ScheduleRepository scheduleRepository,
-                           Scheduler quartzScheduler,
-                           @Client HttpClient httpClient) {
-        this.scheduleRepository = scheduleRepository;
-        this.quartzScheduler = quartzScheduler;
-        this.httpClient = httpClient;
-    }
 
     public Schedule createSchedule(Schedule schedule) {
         Schedule savedSchedule = scheduleRepository.save(schedule);
@@ -58,20 +52,16 @@ public class ScheduleService {
     public void executeApiCall(Schedule schedule) {
         try {
             HttpRequest<Object> request = HttpRequest.POST(schedule.getApiUrl(), schedule.getPayload());
-            if (schedule.getHeaders() != null && !schedule.getHeaders().isEmpty()) {
-                schedule.getHeaders();
-            }
-
             httpClient.toBlocking().exchange(request);
         } catch (Exception e) {
             throw new RuntimeException("Error calling API: " + e.getMessage(), e);
         }
     }
 
-
-    public List<Schedule> getSchedulesByClientId(Long clientId) {
-        return scheduleRepository.findByClientId(clientId);
-    }
+//
+//    public List<Schedule> getSchedulesByClientId(Long clientId) {
+//        return scheduleRepository.findByClientId(clientId);
+//    }
 
     // Get all active schedules
     public List<Schedule> getActiveSchedules() {

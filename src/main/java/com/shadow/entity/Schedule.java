@@ -18,9 +18,9 @@ public class Schedule {
     @GeneratedValue( strategy = GenerationType.AUTO )
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
-    private Client client;
+//    @ManyToOne
+//    @JoinColumn(name = "client_id", nullable = false)
+//    private Client client;
 
     @Column(name = "api_url", nullable = false, columnDefinition = "TEXT")
     private String apiUrl;
@@ -29,7 +29,7 @@ public class Schedule {
     private String cronExpression;
 
     @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime;
+    private LocalDateTime startTime = LocalDateTime.now();;
 
     @Column(name = "payload")
     private String payload;
