@@ -5,6 +5,7 @@ import com.shadow.repository.ClientRepository;
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Singleton;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Singleton
@@ -17,6 +18,7 @@ public class ClientService {
     }
 
     public Client createClient(Client client) {
+        client.setCreatedAt(LocalDateTime.now());
         return clientRepository.save(client);
     }
 
@@ -25,7 +27,7 @@ public class ClientService {
     }
 
     public Optional<Client> findByClientName(String name) {
-        return Optional.ofNullable(clientRepository.findByClientName(name));
+        return Optional.ofNullable(clientRepository.findByclientName(name));
     }
 
     public Iterable<Client> getAllClients() {

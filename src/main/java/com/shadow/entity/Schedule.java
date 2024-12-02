@@ -16,30 +16,27 @@ public class Schedule {
 
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column(name = "schedule_id")
     private Integer id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "client_id", nullable = false)
-//    private Client client;
+    @Column(name = "schedule_client", nullable = false)
+    private String clientName;
 
-    @Column(name = "api_url", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "schedule_api_url", nullable = false, columnDefinition = "TEXT")
     private String apiUrl;
 
-    @Column(name = "cron_expression", nullable = false)
+    @Column(name = "schedule_cron_expression", nullable = false)
     private String cronExpression;
 
-    @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime = LocalDateTime.now();;
-
-    @Column(name = "payload")
+    @Column(name = "schedule_payload")
     private String payload;
 
-    @Column(name = "headers")
+    @Column(name = "schedule_headers")
     private String headers;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(50) DEFAULT 'ACTIVE'")
+    @Column(name = "schedule_status", nullable = false, columnDefinition = "VARCHAR(10)")
     private String status = "ACTIVE";
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "schedule_created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

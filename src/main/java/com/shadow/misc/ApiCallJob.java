@@ -1,5 +1,6 @@
-package com.shadow.service;
+package com.shadow.misc;
 
+import com.shadow.service.ScheduleService;
 import jakarta.inject.Singleton;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

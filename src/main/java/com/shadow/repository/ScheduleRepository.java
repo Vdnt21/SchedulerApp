@@ -8,8 +8,8 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends CrudRepository<Schedule, Long> {
-//
-//    List<Schedule> findByClientId(Long clientId);
+
+    List<Schedule> findByclientName(String clientName);
 
     List<Schedule> findByStatus(String status);
 }

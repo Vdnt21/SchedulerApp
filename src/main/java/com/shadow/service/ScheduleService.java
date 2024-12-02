@@ -1,14 +1,18 @@
 package com.shadow.service;
 
+import com.shadow.entity.Client;
 import com.shadow.entity.Schedule;
+import com.shadow.misc.ApiCallJob;
+import com.shadow.repository.ClientRepository;
 import com.shadow.repository.ScheduleRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
-import io.micronaut.http.client.annotation.Client;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,22 +21,17 @@ import java.util.Optional;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final Scheduler quartzScheduler;
+    private final ClientRepository clientRepository;
     private final HttpClient httpClient;
 
-    public Schedule createSchedule(Schedule schedule) {
-        Schedule savedSchedule = scheduleRepository.save(schedule);
-
-        try {
-            JobDetail jobDetail = buildJobDetail(savedSchedule);
-            Trigger trigger = buildTrigger(savedSchedule);
-
-            quartzScheduler.scheduleJob(jobDetail, trigger);
-        } catch (SchedulerException e) {
-            throw new RuntimeException("Error scheduling job: " + e.getMessage(), e);
+    public Schedule saveSchedule(Schedule schedule) {
+        schedule.setCreatedAt(LocalDateTime.now());
+        schedule.setStatus("ACTIVE");
+        Client client = clientRepository.findByclientName(schedule.getClientName());
+        if(client != null) {
+            schedule.setClientName(client.getClientName());
         }
-
-        return savedSchedule;
+        return scheduleRepository.save(schedule);
     }
 
     private JobDetail buildJobDetail(Schedule schedule) {
@@ -58,23 +57,24 @@ public class ScheduleService {
         }
     }
 
-//
-//    public List<Schedule> getSchedulesByClientId(Long clientId) {
-//        return scheduleRepository.findByClientId(clientId);
-//    }
+    public List<Schedule> getAllSchedules() {
+        return scheduleRepository.findAll();
+    }
 
-    // Get all active schedules
-    public List<Schedule> getActiveSchedules() {
+    public List<Schedule> getSchedulesByClient(String name) {
+        Client client = clientRepository.findByclientName(name);
+        List<Schedule> schedules = null;
+        if(client != null) {
+            schedules = scheduleRepository.findByclientName(client.getClientName());
+        }
+        return schedules;
+    }
+
+    public List<Schedule> getSchedulesByStatus() {
         return scheduleRepository.findByStatus("active");
     }
 
-    // Delete a schedule by ID
-    public void deleteSchedule(Long id) {
-        scheduleRepository.deleteById(id);
-    }
-
-    // Get schedule by ID
-    public Optional<Schedule> getScheduleById(Long id) {
-        return scheduleRepository.findById(id);
+    public Optional<Schedule> getScheduleById(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId);
     }
 }

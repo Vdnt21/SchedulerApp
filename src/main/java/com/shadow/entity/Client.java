@@ -16,6 +16,7 @@ public class Client {
 
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO)
+    @Column( name = "client_id" )
     private Integer id;
 
     @Column( name= "client_name", nullable = false )
@@ -24,7 +25,10 @@ public class Client {
     @Column( name = "client_email", nullable = false, unique = true )
     private String clientEmail;
 
-    @Column( name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column( name = "client_password", nullable = false)
+    private String password;
+
+    @Column( name = "client_created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
 }
