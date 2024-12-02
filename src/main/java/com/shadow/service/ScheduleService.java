@@ -23,6 +23,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ClientRepository clientRepository;
     private final HttpClient httpClient;
+    private final Scheduler quartzScheduler;
 
     public Schedule saveSchedule(Schedule schedule) {
         schedule.setCreatedAt(LocalDateTime.now());
@@ -31,7 +32,16 @@ public class ScheduleService {
         if(client != null) {
             schedule.setClientName(client.getClientName());
         }
-        return scheduleRepository.save(schedule);
+        Schedule savedSchedule = scheduleRepository.save(schedule);
+        try {
+            JobDetail jobDetail = buildJobDetail(savedSchedule);
+            Trigger trigger = buildTrigger(savedSchedule);
+
+            quartzScheduler.scheduleJob(jobDetail, trigger);
+        } catch (SchedulerException e) {
+            throw new RuntimeException("Error scheduling job: " + e.getMessage(), e);
+        }
+        return savedSchedule;
     }
 
     private JobDetail buildJobDetail(Schedule schedule) {
